@@ -1,0 +1,16 @@
+[
+  {
+    "id": "f3aac9c2-9ca6-46e3-8079-b74bf7b4d74c",
+    "name": "Harry",
+    "lastName": "Kris",
+    "cpf": 94965159848,
+    "password": 123456
+  },
+  {
+    "id": "7086aadf-0445-4c1a-9b3c-63cfc971b063",
+    "name": "Sherri",
+    "lastName": "Daniel",
+    "cpf": 74736968211,
+    "password": 123456
+  }
+]

@@ -1,0 +1,38 @@
+[
+  {
+    "id": "ee056ee5-a9c9-4568-ac8f-ea4c80afe9ae",
+    "valueInCents": 1316,
+    "accountId": "c4320079-4b67-42ef-8002-0cb5fa08bee2",
+    "createdAt": "2022-04-04T20:35:06.595Z"
+  },
+  {
+    "id": "bbd787da-39fc-418a-9821-6ecde48d28c7",
+    "valueInCents": 1819,
+    "accountId": "9d153672-e9c0-4fa1-bcb6-c83ae6e2e523",
+    "createdAt": "2021-12-28T09:01:56.631Z"
+  },
+  {
+    "id": "4c222cca-caac-43da-8059-17e747662da6",
+    "valueInCents": 2071,
+    "accountId": "c4320079-4b67-42ef-8002-0cb5fa08bee2",
+    "createdAt": "2022-08-21T14:13:19.821Z"
+  },
+  {
+    "id": "68597a8f-b232-44c3-9baa-d964283e407d",
+    "valueInCents": 1545,
+    "accountId": "9d153672-e9c0-4fa1-bcb6-c83ae6e2e523",
+    "createdAt": "2022-11-06T13:44:10.976Z"
+  },
+  {
+    "id": "8998a7f0-0c65-4f28-a9ee-5656621146db",
+    "valueInCents": 2539,
+    "accountId": "c4320079-4b67-42ef-8002-0cb5fa08bee2",
+    "createdAt": "2022-08-04T08:35:10.301Z"
+  },
+  {
+    "id": "cf4c8dcc-f3bb-4db8-b2e3-335eb4f7a67e",
+    "valueInCents": 1951,
+    "accountId": "9d153672-e9c0-4fa1-bcb6-c83ae6e2e523",
+    "createdAt": "2021-12-23T04:55:05.006Z"
+  }
+]
