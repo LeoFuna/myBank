@@ -1,13 +1,19 @@
-const { simulateQuery } = require("../../utils/fakeDb.utils");
-
+const { join } = require('path');
+const { readFile } = require("fs/promises");
 class BaseRepository {
   constructor({ repository }) {
     this._repository = repository;
+    this._databasePath = join(__dirname, '../../../', 'database');;
   }
 
   async find(itemId) {
-    const itemFound = await simulateQuery(this._repository.find((element) => element.id === itemId));
-    return itemFound;
+    const itemsFromDb = JSON.parse(await readFile(join(this._databasePath, `${this._repository}.json`), 'utf-8'));
+    return itemsFromDb.find((element) => element.id === itemId);
+  }
+
+  async getAll() {
+    const itemsFromDb = JSON.parse(await readFile(join(this._databasePath, `${this._repository}.json`), 'utf-8'));
+    return itemsFromDb;
   }
 };
 
