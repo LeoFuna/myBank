@@ -49,12 +49,14 @@ for(let index = 0; index<= ITEMS_AMOUNT; index ++) {
     id: faker.datatype.uuid(),
     valueInCents: faker.datatype.number({ min: 1000, max: 3000 }),
     accountId: account.id,
+    type: 'credit',
     createdAt: faker.date.past()
   })
   const transaction2 = new Transaction({
     id: faker.datatype.uuid(),
     valueInCents: faker.datatype.number({ min: 1000, max: 3000 }),
     accountId: account2.id,
+    type: 'debit',
     createdAt: faker.date.past()
   })
 
