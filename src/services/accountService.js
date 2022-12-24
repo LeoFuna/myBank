@@ -1,8 +1,9 @@
 const BaseRepository = require("../repository/base/baseRepository");
+const TransactionService = require("./transactionService");
 
 class AccountService {
   constructor() {
-    this._accountsRepository = new BaseRepository({ repository: 'accounts' })
+    this._accountsRepository = new BaseRepository({ repository: 'accounts' });
   }
 
   _formatValueInCentsToPtBrCurrency(valueInCents) {
@@ -15,7 +16,7 @@ class AccountService {
     return userAccount;
   }
 
-  async _getAccountByCode(accountCode) {
+  async getAccountByCode(accountCode) {
     const accounts = await this._accountsRepository.getAll();
     const userAccount = accounts.find(account => account.code === accountCode);
     return userAccount;
@@ -29,25 +30,50 @@ class AccountService {
     }
   }
 
-  async transfer(userId, valueInCents, toCode, date) {
-    const { balanceInCents } = await this._getAccountByUserId(userId)
-    const newBalance = balanceInCents - valueInCents;
-    if (newBalance < 0) throw new Error('Saldo insuficiente!');
+  async transfer(userId, valueInCents, toCode) {
+    const fromAccount = await this._getAccountByUserId(userId)
+    const newFromBalanceInCents = fromAccount.balanceInCents - valueInCents;
+    if (newFromBalanceInCents < 0) throw new Error('Saldo insuficiente!');
 
-    const toAccount = await this._getAccountByCode(toCode);
-    const newToBalance = toAccount.balanceInCents + valueInCents;
+    const toAccount = await this.getAccountByCode(toCode);
+    const newToBalanceInCents = toAccount.balanceInCents + valueInCents;
 
-    //Pensar sobre gravar na database pelo ReadFile and WriteFilre
-    // const accountsFromDb = JSON.parse(await readFile(join(databasePath, 'accounts.json'), 'utf-8'));
-    // accountsFromDb[1].balanceInCents = accountsFromDb[1].balanceInCents - valueInCents
-    // await writeFile(join(databasePath, 'accounts.json'), JSON.stringify(accountsFromDb))
+    await this._accountsRepository.update(fromAccount.id, { balanceInCents: newFromBalanceInCents });
+    await this._accountsRepository.update(toAccount.id, { balanceInCents: newToBalanceInCents });
+   
+    const transactionService = new TransactionService({ accountService: new AccountService() });
+    await transactionService.createNewTransaction({
+      accountCode: fromAccount.code,
+      valueInCents,
+      type: 'debit'
+    });
+    await transactionService.createNewTransaction({
+      accountCode: toAccount.code,
+      valueInCents,
+      type: 'credit'
+    });
 
     return {
-      fromPrevBalance: this._formatValueInCentsToPtBrCurrency(balanceInCents),
-      fromNewBalance: this._formatValueInCentsToPtBrCurrency(newBalance),
+      fromPrevBalance: this._formatValueInCentsToPtBrCurrency(fromAccount.balanceInCents),
+      fromNewBalance: this._formatValueInCentsToPtBrCurrency(newFromBalanceInCents),
       toPrevBalance: this._formatValueInCentsToPtBrCurrency(toAccount.balanceInCents),
-      toNewBalance: this._formatValueInCentsToPtBrCurrency(newToBalance),
+      toNewBalance: this._formatValueInCentsToPtBrCurrency(newToBalanceInCents),
     }
+  }
+
+  async deposit(accountCode, valueInCents) {
+    const accountData = await this.getAccountByCode(accountCode);
+    const newBalanceInCents = accountData.balanceInCents + valueInCents;
+
+    await this._accountsRepository.update(accountData.id, { balanceInCents: newBalanceInCents });
+    const transactionService = new TransactionService({ accountService: new AccountService() });
+    await transactionService.createNewTransaction({
+      accountCode,
+      valueInCents,
+      type: 'credit'
+    });
+
+    return { ...accountData, balanceInCents: newBalanceInCents }
   }
 }
 
