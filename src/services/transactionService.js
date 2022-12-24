@@ -1,14 +1,13 @@
 const BaseRepository = require("../repository/base/baseRepository");
-const AccountService = require("./accountService");
 
 class TransactionService {
-  constructor() {
-    this.transactionRepository = new BaseRepository({ repository: 'transactions' })
+  constructor({ accountService }) {
+    this.transactionRepository = new BaseRepository({ repository: 'transactions' });
+    this.accountService = accountService;
   }
 
   async createNewTransaction({accountCode, valueInCents, type}) {
-    const accountService = new AccountService();
-    const { id } = await accountService.getAccountByCode(accountCode);
+    const { id } = await this.accountService.getAccountByCode(accountCode);
     return await this.transactionRepository.create({
       valueInCents,
       accountId: id,
