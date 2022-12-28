@@ -1,9 +1,8 @@
 const BaseRepository = require("../repository/base/baseRepository");
-const TransactionService = require("./transactionService");
-
 class AccountService {
-  constructor() {
+  constructor({transactionService}) {
     this._accountsRepository = new BaseRepository({ repository: 'accounts' });
+    this.transactionService = transactionService;
   }
 
   _formatValueInCentsToPtBrCurrency(valueInCents) {
@@ -30,7 +29,7 @@ class AccountService {
     }
   }
 
-  async transfer(userId, valueInCents, toCode) {
+  async transfer({userId, valueInCents, toCode}) {
     const fromAccount = await this._getAccountByUserId(userId)
     const newFromBalanceInCents = fromAccount.balanceInCents - valueInCents;
     if (newFromBalanceInCents < 0) throw new Error('Saldo insuficiente!');
@@ -41,14 +40,13 @@ class AccountService {
     await this._accountsRepository.update(fromAccount.id, { balanceInCents: newFromBalanceInCents });
     await this._accountsRepository.update(toAccount.id, { balanceInCents: newToBalanceInCents });
    
-    const transactionService = new TransactionService({ accountService: new AccountService() });
-    await transactionService.createNewTransaction({
-      accountCode: fromAccount.code,
+    await this.transactionService.createNewTransaction({
+      accountId: fromAccount.id,
       valueInCents,
       type: 'debit'
     });
-    await transactionService.createNewTransaction({
-      accountCode: toAccount.code,
+    await this.transactionService.createNewTransaction({
+      accountId: toAccount.id,
       valueInCents,
       type: 'credit'
     });
@@ -61,19 +59,29 @@ class AccountService {
     }
   }
 
-  async deposit(accountCode, valueInCents) {
+  async deposit({accountCode, valueInCents}) {
     const accountData = await this.getAccountByCode(accountCode);
     const newBalanceInCents = accountData.balanceInCents + valueInCents;
 
     await this._accountsRepository.update(accountData.id, { balanceInCents: newBalanceInCents });
-    const transactionService = new TransactionService({ accountService: new AccountService() });
-    await transactionService.createNewTransaction({
-      accountCode,
+    await this.transactionService.createNewTransaction({
+      accountId: accountData.id,
       valueInCents,
       type: 'credit'
     });
 
     return { ...accountData, balanceInCents: newBalanceInCents }
+  }
+
+  async getExtract({ userId, initialDate, endDate }) {
+    const account = await this._getAccountByUserId(userId);
+    const extract = await this.transactionService.getTransactionsByAccountPerPeriod({
+      accountId: account.id,
+      initialDate,
+      endDate
+    })
+
+    return extract;
   }
 }
 
