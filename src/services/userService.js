@@ -10,7 +10,7 @@ class UserService {
     return nonInsecureUserData;
   }
 
-  async changePassword(userId, newPassword, currentPassword) {
+  async changePassword({userId, newPassword, currentPassword}) {
     const { password } = await this._userRepository.find(userId);
 
     if (password !== currentPassword) throw new Error('Senha inválida!');
