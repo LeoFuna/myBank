@@ -20,6 +20,6 @@ Deve ser adicionada uma nova transaçao de crédito na conta, com data no format
 
 ## Use Case 04
 Como usuário do sistema
-Dado o número de um cliente e um periodo inicial e final
+Dado o número de uma conta e um periodo inicial e final
 Deve ser possível ver todas as transações realizadas dentro do período
 Deve ter o formato `20/03/22 - R$ 50,00`
