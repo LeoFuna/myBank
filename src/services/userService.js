@@ -6,7 +6,12 @@ class UserService {
   }
 
   async getUserData(userId) {
-    const { password, cpf, ...nonInsecureUserData } = await this._userRepository.find(userId);
+    const userData = await this._userRepository.find(userId);
+
+    if (!userData) throw new Error('Usuário não encontrado');
+
+    const { password, cpf, ...nonInsecureUserData } = userData;
+
     return nonInsecureUserData;
   }
 
