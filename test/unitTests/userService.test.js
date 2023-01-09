@@ -49,4 +49,50 @@ describe('User Service testes', () => {
       expect(resp).to.be.an('error');
     })
   })
+
+  describe('No método changePassword', () => {
+    it('dado todos os dados válidos, deve ser possível alterar a senha do usuário', async () => {
+      const mockedUserData = validUsers[0];
+      
+      const findStub = sinon.stub(
+        userService._userRepository,
+        'find',
+      );
+      findStub.withArgs(mockedUserData.id).returns(mockedUserData);
+      const updateStub = sinon.stub(
+        userService._userRepository,
+        'update',
+      );
+      updateStub.withArgs(mockedUserData.id, { password: 654321 }).returns({ ...mockedUserData, password: 654321 });
+
+      const userData = await userService.changePassword({ userId: mockedUserData.id, newPassword: 654321, currentPassword: 123456 });
+
+      expect(userData).to.be.deep.equal({ ...mockedUserData, password: 654321 });
+    })
+    it('dado senha antiga inválida, não deve alterar senha e apresentar erro', async () => {
+      const mockedUserData = validUsers[0];
+      
+      const findStub = sinon.stub(
+        userService._userRepository,
+        'find',
+      );
+      findStub.withArgs(mockedUserData.id).returns(mockedUserData);
+      const updateStub = sinon.stub(
+        userService._userRepository,
+        'update',
+      );
+      updateStub.withArgs(mockedUserData.id, { password: 654321 }).returns({ ...mockedUserData, password: 654321 });
+
+      const userData = await userService.changePassword({ userId: mockedUserData.id, newPassword: 654321, currentPassword: 111111 })
+        .catch((e) => {
+          expect(e.message).to.be.equal('Senha inválida!');
+          expect(updateStub.callCount).to.have.equal(0);
+        });
+
+      if (!userData) {
+        return;
+      }
+      expect(userData).to.be.an('error');
+    })
+  })
 })
