@@ -1,8 +1,6 @@
-const BaseRepository = require("../repository/base/baseRepository");
-
 class UserService {
-  constructor() {
-    this._userRepository = new BaseRepository({ repository: 'users' })
+  constructor(BaseRepository) {
+    this._userRepository = new BaseRepository({ repository: 'users' });
   }
 
   async getUserData(userId) {

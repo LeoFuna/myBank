@@ -1,7 +1,7 @@
 const BaseRepository = require("../repository/base/baseRepository");
 
 class TransactionService {
-  constructor() {
+  constructor(BaseRepository) {
     this.transactionRepository = new BaseRepository({ repository: 'transactions' });
   }
 
@@ -27,6 +27,7 @@ class TransactionService {
   }
 
   async createNewTransaction({accountId, valueInCents, type}) {
+    if (!accountId || !valueInCents || !type) throw new Error('Dados inválidos!');
     return await this.transactionRepository.create({
       valueInCents,
       accountId,

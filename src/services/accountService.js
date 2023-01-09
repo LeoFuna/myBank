@@ -1,8 +1,8 @@
 const BaseRepository = require("../repository/base/baseRepository");
 class AccountService {
-  constructor({transactionService}) {
+  constructor({TransactionService, BaseRepository}) {
     this._accountsRepository = new BaseRepository({ repository: 'accounts' });
-    this.transactionService = transactionService;
+    this.transactionService = new TransactionService(BaseRepository);
   }
 
   _formatValueInCentsToPtBrCurrency(valueInCents) {
