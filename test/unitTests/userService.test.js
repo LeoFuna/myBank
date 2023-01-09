@@ -3,12 +3,13 @@ const { expect } = require('chai');
 const sinon = require('sinon');
 const UserService = require('./../../src/services/userService');
 const validUsers = require('./../mocks/valid-users.json');
+const BaseRepository = require('../../src/repository/base/baseRepository');
 
 describe('User Service testes', () => {
   let userService = {};
 
   before(() => {
-    userService = new UserService();
+    userService = new UserService(BaseRepository);
   })
   afterEach(() => {
     sinon.restore();
